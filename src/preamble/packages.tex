@@ -1,2 +1,28 @@
 \usepackage{listings}
 \usepackage{graphicx}
+
+\usepackage{color}
+\usepackage[table]{xcolor}         % pdflatex
+\definecolor{neekiGrey}{RGB}{192,192,192}
+\definecolor{neekiRed}{RGB}{172,40,41}
+\definecolor{neekiBlue}{RGB}{62,70,157}
+\definecolor{neekiGreen}{RGB}{39,171,39}
+\definecolor{neekiPurple}{RGB}{105,39,171}
+\usepackage[
+  pdftex,
+%  pdfauthor={},
+%  pdftitle={},
+%  pdfsubject={},
+%  pdfkeywords={},
+  pdfstartview={Fit},   % fits the width of the page to the window
+                        % all (useful) opts: Fit, FitH, FitV,
+  pdfpagemode=UseOutline,
+  pdfpagelayout=TwoPageLeft,
+  pdfnewwindow=true,    % open links in new window
+  pdfstartpage=1,
+  colorlinks=true,      % false = boxed links; true = colored links
+  linkcolor=neekiRed, % color of internal links
+  citecolor=neekiBlue, % color of links to bibliography
+  filecolor=neekiRed, % color of file links
+  urlcolor=neekiRed,  % color of external links
+]{hyperref} % clickable TOC and refs
