@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>main</TITLE>
+<META NAME="description" CONTENT="main">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="main.css">
+
+</HEAD>
+
+<BODY >
+
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+<SPAN CLASS="arabic">1</SPAN> Summary</A>
+</H1>
+Android APK File Format - a zip file format used to package applications onto an
+Android device such as a tablet, phone, or smart television / set top box.
+
+<P>
+APK files must have several specific directories and files, some of which are of
+interest as they maintain the security through cryptographic certificates and
+hash functions, others will only be mentioned in summary as they are of minimal
+interest in the context of this assignment.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+<SPAN CLASS="arabic">2</SPAN> Detailed Description</A>
+</H1>
+The APK file format contains the following tree layout:
+<BR>
+<IMG
+ WIDTH="219" HEIGHT="252" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="\begin{lstlisting}
+.
++-- AndroidManifest.xml
++-- assets
++-- classes.dex
++-- META...
+...wable
+\vert   +-- layout
+\vert   +-- xml
++-- resources.arsc
+\end{lstlisting}">
+<BR>
+
+<P>
+
+<UL>
+<LI><TT>AndroidManifest.xml</TT> is a compiled XML file and is not human
+  readable, but it may be converted to XML using a tool such as
+<TT>apktool</TT><A NAME="tex2html1"
+  HREF="#foot12"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A>.
+The <TT>AndroidManifest.xml</TT> file contains information such as the application
+name, and access rights (called permissions) that the application would like to
+use. These permissions are presented to the user when the user goes to install
+the application, and are also shown in the Google Play Store (and other markets)
+when the user can browse the application. A user can opt to not install an
+application if it uses a permission the user is not willing to grant (such as
+send an SMS).
+
+<P>
+</LI>
+<LI><TT>assets</TT> are things such as sounds that the application may need
+to use.
+
+<P>
+</LI>
+<LI><TT>classes.dex</TT> Android operates a virtual machine called Dalvik
+  which shares many similarities with Java. A <TT>.dex</TT> file is a Dalvik executable
+can be thought of as similar to a <TT>.class</TT> file in Java.
+
+<P>
+</LI>
+<LI><TT>META-INF</TT> is a directory which contains the following three
+  files of interest:
+
+<UL>
+<LI><TT>MANIFEST.MF</TT> a listing of all files present in the APK and a
+  digest of their content (default hash algorithm is SHA-1 represented as a
+  base64 value).
+</LI>
+<LI><TT>CERT.RSA</TT> application certificate. Standard <TT>openssl</TT>
+  commands from the Linux command line can be used to read and verify these
+  certificates.
+</LI>
+<LI><TT>CERT.SF</TT> a <TT>SHA-1</TT> hash of each entry in the
+  <TT>MANIFEST.MF</TT> file, which is then signed using the application
+  certificate, <TT>CERT.RSA</TT>. 
+  
+</LI>
+</UL>
+
+<P>
+Typically, in signing an <TT>APK</TT>, the compiled application is SHA-1
+  hashed (<TT>MANIFEST.MF</TT>), and then the hash entries are hashed as second
+  time, signed using <TT>CERT.RSA</TT> to produce the signature file
+  <TT>CERT.SF</TT>.
+
+<P>
+</LI>
+</UL>
+
+<P>
+When an application is to be installed, it is done using the Package Manager
+within the operating system, which places calls to check <TT>CERT.SF</TT>. It
+also includes the prompt to the user showing the permissions required from
+<TT>AndroidManifest.xml</TT>, and this presents the weakest point of the
+security system - the end user.
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Assets at Risk</A>
+</H1>
+Three assets that may be placed at risk are
+
+<UL>
+<LI>Phones
+</LI>
+<LI>Tablets
+</LI>
+<LI>Digital TVs / set top boxes
+</LI>
+</UL>
+
+<P>
+If one uses their phone or tablet for banking, and an attacker installs
+malicious software onto the victim's device, it is possible that banking data
+could be exposed. By the same token, confidential email data may be leaked, or,
+more simply, a phone could be turned into a zombie bot for sending SMS
+spam messages.
+
+<P>
+Information leakage is possible despite software running in sandboxed processes.
+One possible example of defeating the sandbox is to install a replacement
+keyboard - thereby reading all keystrokes.
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Threat Surface</A>
+</H1>
+Three possible attack vectors in which an adversary may comprimise a device:
+
+<UL>
+<LI>Social engineering - asking a user to install a piece of malicious
+  software under some false pretense.
+</LI>
+<LI>Physically obtaining the handset in an unlocked state and installing a
+  piece of malicious software, perhaps in a socially engineered attempt to 'fix
+  a problem'.
+</LI>
+<LI>Remote attack on running daemons - some handsets run the Dropbear SSH
+  daemon; if this daemon runs as root and were to be comprimised (say buffer
+  overflow), packages can be installed into the system partition and run at the
+  next reboot.
+</LI>
+</UL>
+
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+<SPAN CLASS="arabic">5</SPAN> Vulnerabilities</A>
+</H1>
+In two of these three possible attack vectors, the attacker is required to
+either have the device, or to trick the end user into installing software onto
+the device.
+
+<P>
+Users must exercise discretion when installing software, and be cautious who
+they hand their unlocked devices to.
+
+<P>
+The third vulnerability is the most interesting, as it requires exploiting bugs
+in software that may not be running on the device. Attacks can be mitigated by
+turning off daemons that are not necessary (most users are not running Dropbear
+SSH by default).
+
+<P>
+Versions of Android prior to 4.0 can be plugged into a desktop computer and
+enter a debug mode whereby packages can be installed over a USB cable (this is
+also available over IP) using <TT>ADB</TT><A NAME="tex2html2"
+  HREF="#foot43"><SUP><SPAN CLASS="arabic">2</SPAN></SUP></A>without a prompt from the user. This is typically turned off by default. More
+recently, on screen prompts to show the application permissions became the norm,
+however most recently, a handshake procedure between the handset and the
+computer similar to the SSH host key authentication process takes place. If a PC
+is not trusted, <TT>ADB</TT> refuses the connection and software cannot be
+installed.
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+<SPAN CLASS="arabic">6</SPAN> Controls</A>
+</H1>
+The <TT>AndroidManifest.xml</TT> file presents a list of requested permissions
+that an APK requires to run, and at install time the list of permissions is
+shown to the user so they can determine if the end user should install the
+software or not.
+
+<P>
+Signed certificate files are used to certify whether software is legitimate or
+not, and Android disallows unsigned software to be installed by default.
+Installing unsigned files requires delving into the system settings, and a
+warning message advising the user of unsafe practices appears when disabling the
+signature checks.
+
+<P>
+Host key authentication prevents a device being plugged into a PC and an APK
+being pushed to the device because unrecognised devices are refused connection.
+
+<P>
+
+<H1><A NAME="SECTION00070000000000000000">
+<SPAN CLASS="arabic">7</SPAN> Risk Evaluation</A>
+</H1>
+In the default state, the greatest risk comes from the physical security of a
+device. The default state of a device is that the device itself has no PIN,
+passphrase or pattern to lock / unlock the device, however also are typically
+not running any daemons that are likely to be exploitable.
+
+<P>
+There are quite reasonable safeguards to prevent a remote attacker from
+installing software to exploit a device, and most users are reasonably wary
+enough to not physically hand a phone over to someone who is untrusted. 
+
+<P>
+
+<H1><A NAME="SECTION00080000000000000000">
+<SPAN CLASS="arabic">8</SPAN> Conclusion</A>
+</H1>
+Social engineering an attack on a user to install malicious software on a device
+remains the easiest method of attack. Even so, the permissions at install time
+will alert the user as to what the software has the capability of doing. Taking
+the earlier example of an application to act as replacement keyboard, a user
+<SPAN  CLASS="textbf">should</SPAN> ask <SPAN  CLASS="textit">``Why does a keyboard need Internet access? Why does it
+need to send an SMS?''</SPAN>. Other applications, such as launchers which download
+news and social media, as well as having dialers to make dialing a phone call
+(say you're driving a car) easier make asking these questions somewhat harder.
+
+<P>
+Anecdotal evidence suggests that most users do not actually read these
+permissions and usually confirm installation.
+
+<P>
+For a brand new device, simply exercising caution and putting a passphrase or
+PIN to unlock the device should suffice for most users.
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
+About this document ...</A>
+</H1>
+ <P>
+This document was generated using the
+<A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2008 (1.71)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+Nikos Drakos, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-split 0 -show_section_numbers -local_icons -no_navigation main.tex</TT>
+<P>
+The translation was initiated by Adam Carmichael on 2013-05-28
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot12">...apktool</A><A
+ HREF="main.html#tex2html1"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A></DT>
+<DD>https://code.google.com/p/android-apktool/
+
+</DD>
+<DT><A NAME="foot43">...ADB</A><A
+ HREF="main.html#tex2html2"><SUP><SPAN CLASS="arabic">2</SPAN></SUP></A></DT>
+<DD>Android Debug Bridge
+
+</DD>
+</DL>
+<BR><HR>
+<ADDRESS>
+Adam Carmichael
+2013-05-28
+</ADDRESS>
+</BODY>
+</HTML>
